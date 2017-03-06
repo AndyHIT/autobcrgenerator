@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<base href="./"/>
+<script type='text/javascript' src='bizrate.js'></script>
+<script>
+var DOMAINS = ['magsformiles','tradepubfbm','mybonuscenter','mileageplus','magsforpoints','magazineoutlet','common','magsandmore'];
+//var domain = prompt("Enter the domain you are pushing");
+//var domain = domains[1];
+/*
+if(domain != null){
+	while($.inArray(domain,domains) == -1){
+		domain = prompt("Domain not supported. Enter a valid domain.");
+	}
+}else{
+	return;
+}
+*/
+function printScript(text,domain,env){
+	var apache = weblogic = '';
+	for(var n=0;n<text.length;n++){
+		var lines = text[n].toString().trim().split("\n");
+		$.each(lines,function(i,v){
+			if(env == 'bizdev'){
+				apache += './sync_bizdev.sh '+domain[n]+'/'+v+';<br/>';
+				weblogic += (v.length==8 && v.substr(0,1)==1) ? './move_to_bizdev_data.sh '+v+';</br>' : '';
+			}else if(env == 'stage'){
+				apache += './sync_staging.sh '+domain[n]+'/'+v+';<br/>';
+				weblogic += (v.length==8 && v.substr(0,1)==1) ? './move_to_stage_data.sh '+v+';<br/>' : '';
+			}else if(env == 'prod-savvis'){
+				apache += '$HOME/swat/ksh/move_to_apache_single.sh '+domain[n]+'/'+v+';<br/>';
+			}else if(env == 'prod-links'){
+				apache += 'http://www.'+domain[n]+'.com/'+v+';<br/>';
+			}else{
+				weblogic += (v.length==8 && v.substr(0,1)==1) ? '$HOME/swat/ksh/move_to_weblogic_single.sh '+v+';</br>' : '';
+				apache += '/home/swatprod/content_push/ksh/sync_production.sh '+domain[n]+'/'+v+';<br/>';
+			}
+		});
+		//(domain == DOMAINS[1]) ? 'FBM > ADHOC > Invalidate_Webpromo_Cache'
+	}
+	weblogic += (env != 'prod') ? './invalidate_cache.ksh' : 'nj2t5220-11z2-1 -> SWAT -> invalidateCache_Prod';
+	weblogic += '<br/>';
+//	$('#staging_script').html(weblogic+apache+'&nbsp;');
+	return weblogic+apache;
+}
+function generateScript(){
+	var text = [];
+	var domain = [];
+	$.each($('.row'),function(i,v){
+		var $obj = $(this);
+		if($obj.children('select').val() != ''){
+			text.push([]);
+			domain.push([]);
+			text[text.length-1].push($obj.children('textarea').val());
+			domain[domain.length-1].push($obj.children('select').val());
+		}
+	})
+	//console.log("text:"+text);
+	//console.log("domain:"+domain);
+	if(text.length>0){
+		document.getElementById("bizdev_script").innerHTML = printScript(text,domain,'bizdev');
+		document.getElementById("staging_script").innerHTML = printScript(text,domain,'stage');
+		document.getElementById("prod_script").innerHTML = printScript(text,domain,'prod');
+		document.getElementById("prod_script_savvis").innerHTML = printScript(text,domain,'prod-savvis');
+		document.getElementById("prod_links").innerHTML = printScript(text,domain,'prod-links');
+	}
+}
+function addNewTextField(){
+	var row = $('.row:last').clone();
+	$('.container').append(row);
+	$('.addNew:first').remove();
+}
+$(function(){
+	$('h1').on('click',function(){
+		if($(this).next().is(':visible')){
+			$(this).next().slideUp();
+		}else{
+			$(this).next().slideDown();
+		}
+	})
+	$.each(DOMAINS,function(i,v){
+		$('select').append("<option value='"+v+"'>"+v+"</option>");
+	});
+	$(document).on('click','.submit',function(){
+		generateScript();
+	})
+	$(document).on('click','.addNew',function(){
+		addNewTextField();
+	})
+	if(location.search != ''){
+		(location.search == '?fbizrate') ? $('textarea').val(full_bizrate.join('\n')) : $('textarea').val(control.join('\n'));
+	}
+})
+
+</script>
+<style type='text/css'>
+	h1:hover{cursor:pointer}
+</style>
+</head>
+<body>
+<div class='container'>
+	<h2>Enter Promotions (separate by new line)</h2>
+	<div class='row'>
+		<textarea rows='3'></textarea>
+		<br/>
+		<select name='domain' id='domain'>
+			<option value=''>Select a domain</option>
+		</select>
+		<button class='submit'>Submit</button>
+		<br/><br/>
+		<button class='addNew'>Add new Text Field</button>
+	</div>
+</div>
+<div id='bizdev'>
+	<h1>BizDev Script</h1>
+	<pre id='bizdev_script'></pre>
+</div>
+<h1>Staging Script</h1>
+<pre id='staging_script'></pre>
+<h1>AWS Production Script</h1>
+<pre id='prod_script'></pre>
+<h1>Production Link</h1>
+<pre id='prod_links'></pre>
+<h1>Savvis Production Script</h1>
+<pre id='prod_script_savvis'></pre>
+</body>
+</html>
