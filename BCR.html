@@ -2,8 +2,36 @@
 <html>
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<base href="./"/>
-<script type='text/javascript' src='bizrate.js'></script>
+<style type='text/css'>
+	h1:hover{cursor:pointer}
+</style>
+</head>
+<body>
+<div class='container'>
+	<h2>Enter Promotions (separate by new line)</h2>
+	<div class='row'>
+		<textarea rows='3'></textarea>
+		<br/>
+		<select name='domain' id='domain'>
+			<option value=''>Select a domain</option>
+		</select>
+		<button class='submit'>Submit</button>
+		<br/><br/>
+		<button class='addNew'>Add new Text Field</button>
+	</div>
+</div>
+<div id='bizdev'>
+	<h1>BizDev Script</h1>
+	<pre id='bizdev_script'></pre>
+</div>
+<h1>Staging Script</h1>
+<pre id='staging_script'></pre>
+<h1>AWS Production Script</h1>
+<pre id='prod_script'></pre>
+<h1>Production Link</h1>
+<pre id='prod_links'></pre>
+<h1>Savvis Production Script</h1>
+<pre id='prod_script_savvis'></pre>
 <script>
 var DOMAINS = ['magsformiles','tradepubfbm','mybonuscenter','mileageplus','magsforpoints','magazineoutlet','common','magsandmore'];
 //var domain = prompt("Enter the domain you are pushing");
@@ -94,35 +122,5 @@ $(function(){
 })
 
 </script>
-<style type='text/css'>
-	h1:hover{cursor:pointer}
-</style>
-</head>
-<body>
-<div class='container'>
-	<h2>Enter Promotions (separate by new line)</h2>
-	<div class='row'>
-		<textarea rows='3'></textarea>
-		<br/>
-		<select name='domain' id='domain'>
-			<option value=''>Select a domain</option>
-		</select>
-		<button class='submit'>Submit</button>
-		<br/><br/>
-		<button class='addNew'>Add new Text Field</button>
-	</div>
-</div>
-<div id='bizdev'>
-	<h1>BizDev Script</h1>
-	<pre id='bizdev_script'></pre>
-</div>
-<h1>Staging Script</h1>
-<pre id='staging_script'></pre>
-<h1>AWS Production Script</h1>
-<pre id='prod_script'></pre>
-<h1>Production Link</h1>
-<pre id='prod_links'></pre>
-<h1>Savvis Production Script</h1>
-<pre id='prod_script_savvis'></pre>
 </body>
 </html>
